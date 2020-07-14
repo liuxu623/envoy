@@ -105,6 +105,10 @@ void CodeStatsImpl::chargeResponseStat(const ResponseStatInfo& info) const {
                                     info.request_vcluster_name_, rq_group});
     incCounter(info.global_scope_,
                {vhost_, info.request_vhost_name_, vcluster_, info.request_vcluster_name_, rq_code});
+  } else {
+    incCounter(info.global_scope_, {vhost_, info.request_vhost_name_, upstream_rq_completed_});
+    incCounter(info.global_scope_, {vhost_, info.request_vhost_name_, rq_group});
+    incCounter(info.global_scope_, {vhost_, info.request_vhost_name_, rq_code});
   }
 
   // Handle per zone stats.
@@ -147,6 +151,9 @@ void CodeStatsImpl::chargeResponseTiming(const ResponseTimingInfo& info) const {
     recordHistogram(info.global_scope_,
                     {vhost_, info.request_vhost_name_, vcluster_, info.request_vcluster_name_,
                      upstream_rq_time_},
+                    Stats::Histogram::Unit::Milliseconds, count);
+  } else {
+    recordHistogram(info.global_scope_, {vhost_, info.request_vhost_name_, upstream_rq_time_},
                     Stats::Histogram::Unit::Milliseconds, count);
   }
 
