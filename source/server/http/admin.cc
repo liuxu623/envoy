@@ -1002,6 +1002,7 @@ uint64_t PrometheusStatsFormatter::statsAsPrometheus(
     const bool used_only, const absl::optional<std::regex>& regex) {
   std::unordered_set<std::string> metric_type_tracker;
   for (const auto& counter : counters) {
+    ENVOY_LOG(debug, "name: {}", counter->name());
     if (!shouldShowMetric(*counter, used_only, regex)) {
       continue;
     }

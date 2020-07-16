@@ -39,7 +39,7 @@ struct CodeStats::ResponseTimingInfo {
   Stats::StatName to_zone_;
 };
 
-class CodeStatsImpl : public CodeStats {
+class CodeStatsImpl : public CodeStats, Logger::Loggable<Logger::Id::admin> {
 public:
   explicit CodeStatsImpl(Stats::SymbolTable& symbol_table);
 

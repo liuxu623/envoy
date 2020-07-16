@@ -330,6 +330,8 @@ void Filter::chargeUpstreamCode(uint64_t response_status_code,
     const bool internal_request = Http::HeaderUtility::isEnvoyInternalRequest(*downstream_headers_);
 
     Stats::StatName upstream_zone = upstreamZone(upstream_host);
+    ENVOY_LOG(debug, "route_entry_->virtualHost().statName(): {}",
+              config_.scope_.symbolTable().toString(route_entry_->virtualHost().statName()));
     Http::CodeStats::ResponseStatInfo info{config_.scope_,
                                            cluster_->statsScope(),
                                            config_.empty_stat_name_,

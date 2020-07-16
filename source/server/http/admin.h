@@ -502,7 +502,7 @@ private:
  *
  * See: https://prometheus.io/docs/concepts/data_model
  */
-class PrometheusStatsFormatter {
+class PrometheusStatsFormatter : Logger::Loggable<Logger::Id::admin> {
 public:
   /**
    * Extracts counters and gauges and relevant tags, appending them to

@@ -49,6 +49,8 @@ CodeStatsImpl::CodeStatsImpl(Stats::SymbolTable& symbol_table)
 
 void CodeStatsImpl::incCounter(Stats::Scope& scope, const Stats::StatNameVec& names) const {
   const Stats::SymbolTable::StoragePtr stat_name_storage = symbol_table_.join(names);
+  ENVOY_LOG(debug, "stat_name_storage {}",
+            scope.symbolTable().toString(Stats::StatName(stat_name_storage.get())));
   scope.counterFromStatName(Stats::StatName(stat_name_storage.get())).inc();
 }
 
@@ -97,6 +99,10 @@ void CodeStatsImpl::chargeResponseStat(const ResponseStatInfo& info) const {
     writeCategory(info, rq_group, rq_code, external_);
   }
 
+  incCounter(info.cluster_scope_, {vhost_, info.request_vhost_name_, upstream_rq_completed_});
+  incCounter(info.cluster_scope_, {vhost_, info.request_vhost_name_, rq_group});
+  incCounter(info.cluster_scope_, {vhost_, info.request_vhost_name_, rq_code});
+
   // Handle request virtual cluster.
   if (!info.request_vcluster_name_.empty()) {
     incCounter(info.global_scope_, {vhost_, info.request_vhost_name_, vcluster_,
@@ -105,10 +111,6 @@ void CodeStatsImpl::chargeResponseStat(const ResponseStatInfo& info) const {
                                     info.request_vcluster_name_, rq_group});
     incCounter(info.global_scope_,
                {vhost_, info.request_vhost_name_, vcluster_, info.request_vcluster_name_, rq_code});
-  } else {
-    incCounter(info.global_scope_, {vhost_, info.request_vhost_name_, upstream_rq_completed_});
-    incCounter(info.global_scope_, {vhost_, info.request_vhost_name_, rq_group});
-    incCounter(info.global_scope_, {vhost_, info.request_vhost_name_, rq_code});
   }
 
   // Handle per zone stats.
